@@ -6,8 +6,10 @@ export default {
     component: Weather
 }
 
-export const WeatherCloud = () => <Weather temperature={10} state={"cloud"}/>
-export const WeatherCloudy = () => <Weather temperature={10} state={"cloudy"}/>
-export const WeatherFog = () => <Weather temperature={10} state={"fog"}/>
-export const WeatherSunny = () => <Weather temperature={10} state={"sunny"}/>
-export const WeatherRain = () => <Weather temperature={10} state={"rain"}/>
+export const WeatheRclouds = () => <Weather temperature={10} state={"clouds"} />
+export const WeatheRfog = () => <Weather temperature={10} state={"fog"} />
+export const WeatheRclear = () => <Weather temperature={10} state={"clear"} />
+export const WeatheRrain = () => <Weather temperature={10} state={"rain"} />
+export const WeatheRsnow = () => <Weather temperature={10} state={"snow"} />
+export const WeatheRdrizzle = () => <Weather temperature={10} state={"drizzle"} />
+export const WeatheRthunderstorm = () => <Weather temperature={10} state={"thunderstorm} />

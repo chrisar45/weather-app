@@ -1,36 +1,33 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
-import { WiCloud, WiDayCloudy, WiDayFog, WiDaySunny, WiRain } from 'react-icons/wi'
+import Skeleton from '@material-ui/lab/Skeleton'
 import { IconContext } from 'react-icons'
-
-const stateByName = {
-    cloud: WiCloud, 
-    cloudy: WiDayCloudy, 
-    fog: WiDayFog, 
-    sunny: WiDaySunny, 
-    rain: WiRain
-}
-
-const renderState = state => {
-    const IconState = stateByName[state]
-    return <IconState />
-}
+import IconState, { validValues } from './../IconState'
 
 const Weather = ({ temperature, state }) => {
     return (
-        <div>
-            <IconContext.Provider value={{ size: '5em' }}>
-                { renderState(state) }
+        <Grid container item direction="row" justify="center" alignItems="center" spacing={1}>
+            <IconContext.Provider value={{ size: '6em' }}>
+                {
+                    state ? 
+                        <IconState state={state} /> : 
+                        <Skeleton variant="circle" height={80} width={80}/>
+                }
             </IconContext.Provider>
-            <Typography variant={"h3"} display={"inline"}>{temperature}</Typography>
-        </div>
+            {
+                temperature ? 
+                    <Typography variant={"h2"} display={"inline"}>{temperature}</Typography> : 
+                    <Skeleton variant="rect" height={80} width={80}/>
+            }
+        </Grid>
     )
 }
 
 Weather.propTypes = {
-    temperature: PropTypes.number.isRequired,
-    state: PropTypes.string.isRequired,
+    temperature: PropTypes.number,
+    state: PropTypes.oneOf(validValues),
 }
 
 export default Weather
