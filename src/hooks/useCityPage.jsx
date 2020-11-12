@@ -4,29 +4,28 @@ import { useParams } from 'react-router-dom'
 import { getForecastUrl } from './../utils/apis'
 import getCharData from './../utils/transform/getCharData'
 import getForecastItemList from './../utils/transform/getForecastItemList'
+import { getCityCode } from './../utils/utils'
 
-const useCityPage = () => {
-    const [charData, setCharData] = useState(null)
-    const [forecastItemList, setForecastItemList] = useState(null)
+const useCityPage = (allCharData, allForecastItemList, onSetCharData, onSetForecastItemList) => {
     const [error, setError] = useState(null)
 
     const { city, countryCode } = useParams()
 
     useDebugValue(`useCityPage ${city},${countryCode}`)
     useEffect(() => {
-        const getForecast = async (city, countryCode) => {
+        const cityCode = getCityCode(city, countryCode)
+        const getForecast = async () => {
             const url = getForecastUrl( city, countryCode )
-
             try {
                 const { data } = await axios.get(url)
 
                 const dataAux = getCharData(data)
                 
-                setCharData(dataAux)
+                onSetCharData({ [cityCode]: dataAux })
 
                 const forecastItemListAux = getForecastItemList( data )
 
-                setForecastItemList(forecastItemListAux)
+                onSetForecastItemList({ [cityCode]: forecastItemListAux })
 
             } catch (error) {
                 if (error.response) { // Errores que nos responde el server
@@ -39,11 +38,13 @@ const useCityPage = () => {
             }
         }
 
-        getForecast(city, countryCode)
+        if(allCharData && allForecastItemList && !allCharData[cityCode] && !allForecastItemList[cityCode]){
+            getForecast()
+        }
 
-    }, [city, countryCode])
+    }, [city, countryCode, onSetCharData, onSetForecastItemList, allCharData, allForecastItemList])
 
-    return { city, countryCode, charData, forecastItemList, error, setError }
+    return { city, countryCode, error, setError }
 }
 
 export default useCityPage

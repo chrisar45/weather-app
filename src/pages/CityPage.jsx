@@ -13,15 +13,24 @@ import useCityList from './../hooks/useCityList'
 import { getCityCode } from './../utils/utils'
 import { getCountryNameByCountrycode } from './../utils/services/cities'
 
-const CityPage = () => {
-    const { city, countryCode, charData, forecastItemList, error, setError } = useCityPage()
+const CityPage = ({ data, actions }) => {
+    const { allWeather, allCharData, allForecastItemList } = data
+    const { onSetAllWeather, onSetCharData, onSetForecastItemList } = actions
+
+    const { city, countryCode, error, setError } = useCityPage(allCharData, allForecastItemList, onSetCharData, onSetForecastItemList)
 
     const cities = useMemo(() => ([{ city, countryCode }]), [ city, countryCode ])
 
-    const { allWeather } = useCityList(cities)
+    useCityList(cities, allWeather, onSetAllWeather)
 
-    const weather = allWeather[getCityCode(city, countryCode)]
-        
+    const citycode = getCityCode(city, countryCode)
+
+    const weather = allWeather[citycode]
+    
+    const charData = allCharData[citycode]
+    
+    const forecastItemList = allForecastItemList[citycode]
+
     const country = countryCode && getCountryNameByCountrycode(countryCode)
 
     const state = weather && weather.state
