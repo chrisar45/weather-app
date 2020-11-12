@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useReducer } from 'react'
 import {
     BrowserRouter as Router,
     Switch,
@@ -10,33 +10,31 @@ import CityPage from './pages/CityPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 const App = () => {
-    const [allWeather, setAllWeather] = useState({})
-    const [allCharData, setAllCharData] = useState({})
-    const [allForecastItemList, setAllForecastItemList] = useState({})
+    const initialValue = {
+        allWeather: {},
+        allCharData: {},
+        allForecastItemList: {}
+    }
 
-    const onSetAllWeather = useCallback((weatherCity) => {
-        setAllWeather(allWeather => ({ ...allWeather, ...weatherCity }))
-    }, [setAllWeather])
-
-    const onSetCharData = useCallback((charDataCity) => {
-        setAllCharData(allCharData => ({ ...allCharData, ...charDataCity }))
-    }, [setAllCharData])
-
-    const onSetForecastItemList = useCallback((forecastItemListCity) => {
-        setAllForecastItemList(allForecastItemList => ({ ...allForecastItemList, ...forecastItemListCity }))
-    }, [setAllForecastItemList])
-
-    const actions = useMemo(() => ({
-        onSetAllWeather,
-        onSetCharData, 
-        onSetForecastItemList
-    }), [onSetAllWeather, onSetCharData, onSetForecastItemList])
-
-    const data = useMemo(() => ({
-        allWeather,
-        allCharData,
-        allForecastItemList
-    }), [allWeather, allCharData, allForecastItemList])
+    const reducer = (state, action) => {
+        switch (action.type) {
+            case 'SET_ALL_WEATHER':
+                const weatherCity = action.payload
+                const newAllWeather = { ...state.allWeather, ...weatherCity }
+                return { ...state, allWeather: newAllWeather }
+            case 'SET_CHART_DATA':
+                const charDataCity = action.payload
+                const newAllCharData = { ...state.allCharData, ...charDataCity }
+                return { ...state, allCharData: newAllCharData }
+            case 'SET_FORECAST_ITEM_LIST':
+                const allForecastItemListCity = action.payload
+                const newAllForecastItemList = { ...state.allForecastItemList, ...allForecastItemListCity }
+                return { ...state, allForecastItemList: newAllForecastItemList }
+            default:
+                return state
+        }
+    }
+    const [state, dispatch] = useReducer(reducer, initialValue)
 
     return (
         <Router>
@@ -45,10 +43,10 @@ const App = () => {
                     <WelcomePage />
                 </Route>
                 <Route path="/main">
-                    <MainPage data={data} actions={actions} />
+                    <MainPage data={state} actions={dispatch} />
                 </Route>
                 <Route path="/city/:countryCode/:city">
-                    <CityPage data={data} actions={actions} />
+                    <CityPage data={state} actions={dispatch} />
                 </Route>
                 <Route>
                     <NotFoundPage />
